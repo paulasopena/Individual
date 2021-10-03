@@ -1,0 +1,200 @@
+DROP DATABASE IF EXISTS Juego;
+CREATE DATABASE Juego;
+USE Juego;
+
+CREATE TABLE Usuario (
+  int id NOT NULL,
+  primary key (id),
+  Nombre VARCHAR(20) NOT NULL,
+  Contraseña VARCHAR(30) NOT NULL,
+  Mail VARCHAR(50) NOT NULL,
+
+)ENGINE = InnoDB;
+
+
+CREATE TABLE Partidas (
+  int id NOT NULL,
+  primary key (id),
+  Fecha VARCHAR(20) NOT NULL,
+  Ganador VARCHAR(30) NOT NULL,
+)ENGINE = InnoDB;
+
+CREATE TABLE Participaciones (
+  int id_P NOT NULL,
+  foreign key id_P references Partida(id),
+  int id_U NOT NULL,
+  foreign key id_U references Usuario(id),
+  int puntos NOT NULL,
+
+)ENGINE = InnoDB;
+
+
+
+INSERT INTO Usuario VALUES(1,'Maria','123456', 'mariaubiergo@gmail.com');
+INSERT INTO Usuario VALUES(2,'Jaume','654321', 'jaumegarcia@gmail.com');
+INSERT INTO Usuario VALUES(3,'Minerva','hijabella', 'minervaubiergo@gmail.com');
+INSERT INTO Usuario VALUES(4,'Cayetano','hijobello', 'cayetanoubiergo@gmail.com');
+INSERT INTO Usuario VALUES(5,'Paula','hello', 'mariaubiergo@gmail.com');
+
+
+
+INSERT INTO Partidas VALUES(1,'23/10/21','Maria');
+INSERT INTO Partidas VALUES(2,'22/10/21','Jaume');
+INSERT INTO Partidas VALUES(3,'21/10/21','Minerva');
+INSERT INTO Partidas VALUES(4,'19/10/21','Cayetano');
+INSERT INTO Partidas VALUES(5,'18/10/21','Paula');
+
+
+INSERT INTO Participacion VALUES(1,2,10);
+INSERT INTO Participacion VALUES(2,3,11);
+INSERT INTO Participacion VALUES(4,1,9);
+INSERT INTO Participacion VALUES(5,2,7);
+INSERT INTO Participacion VALUES(3,2,5);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+CREATE TABLE Products (
+  Code INTEGER,
+  Name VARCHAR(255) NOT NULL ,
+  Price DECIMAL NOT NULL ,
+  Manufacturer INTEGER NOT NULL,
+  PRIMARY KEY (Code), 
+  FOREIGN KEY (Manufacturer) REFERENCES   Manufacturers(Code)
+)ENGINE = InnoDB;
+INSERT INTO Manufacturers(Code,Name) VALUES(1,'Sony');
+INSERT INTO Manufacturers(Code,Name) VALUES(2,'Creative Labs');
+INSERT INTO Manufacturers(Code,Name) VALUES(3,'Hewlett-Packard');
+INSERT INTO Manufacturers(Code,Name) VALUES(4,'Iomega');
+INSERT INTO Manufacturers(Code,Name) VALUES(5,'Fujitsu');
+INSERT INTO Manufacturers(Code,Name) VALUES(6,'Winchester');
+ 
+INSERT INTO Products(Code,Name,Price,Manufacturer) VALUES(1,'Hard drive',240,5);
+INSERT INTO Products(Code,Name,Price,Manufacturer) VALUES(2,'Memory',120,6);
+INSERT INTO Products(Code,Name,Price,Manufacturer) VALUES(3,'ZIP drive',150,4);
+INSERT INTO Products(Code,Name,Price,Manufacturer) VALUES(4,'Floppy disk',5,6);
+INSERT INTO Products(Code,Name,Price,Manufacturer) VALUES(5,'Monitor',240,1);
+INSERT INTO Products(Code,Name,Price,Manufacturer) VALUES(6,'DVD drive',180,2);
+INSERT INTO Products(Code,Name,Price,Manufacturer) VALUES(7,'CD drive',90,2);
+INSERT INTO Products(Code,Name,Price,Manufacturer) VALUES(8,'Printer',270,3);
+INSERT INTO Products(Code,Name,Price,Manufacturer) VALUES(9,'Toner cartridge',66,3);
+INSERT INTO Products(Code,Name,Price,Manufacturer) VALUES(10,'DVD burner',180,2);
+-- Nombres de todos los productos de la tienda
+SELECT Name FROM Products;
+-- Nombres y precios de todos los productos de la tienda
+SELECT Name, Price FROM Products;
+-- Nombres de productos con precio menor o igual a 200
+SELECT Name FROM Products WHERE Price <= 200;
+-- Nombres de productos con precio entre 60 y 120
+SELECT * FROM Products
+  WHERE Price >= 60 AND Price <= 120;
+SELECT * FROM Products
+  WHERE Price BETWEEN 60 AND 120;
+-- Muestra el nombre y el precio de los productos en céntimos (es decir, multiplicado por 100)
+-- Sin AS (Alias) 
+SELECT Name, Price * 100 FROM Products;
+ 
+-- Con AS (Alias)
+SELECT Name, Price * 100 AS PriceCents FROM Products;
+
+-- Precio medio de los productos
+SELECT AVG(Price) FROM Products;
+
+-- Precio medio de los productos con codigo de fabricante igual a 2
+SELECT AVG(Price) FROM Products WHERE Manufacturer=2;
+
+-- Numero de productos con un precio mayor o igual a 180
+SELECT COUNT(*) FROM Products WHERE Price >= 180;
+
+-- Muestra el nombre y el precio de todos los productos con un precio mayor o igual a 180 y ordenados primero por precio (en orden descendente) y después por nombre en orden ascendente
+SELECT Name, Price FROM Products
+  WHERE Price >= 180
+  ORDER BY Price DESC, Name;
+
+-- Muestra el nombre, precio y nombre de fabricante de todos los productos
+-- Sin INNER JOIN 
+SELECT Products.Name, Price, Manufacturers.Name
+  FROM Products, Manufacturers
+  WHERE Products.Manufacturer = Manufacturers.Code;
+ 
+-- Con INNER JOIN
+SELECT Products.Name, Price, Manufacturers.Name
+  FROM Products INNER JOIN Manufacturers
+  ON Products.Manufacturer = Manufacturers.Code;
+
+-- Muestra el precio medio de cada fabricante de productos mostrando sólo el -- código del fabricante
+SELECT AVG(Price), Manufacturer FROM Products GROUP BY Manufacturer;
+
+-- Muestra el precio medio de cada fabricante de productos mostrando el nombre del fabricante
+-- Sin INNER JOIN 
+SELECT AVG(Price), Manufacturers.Name
+  FROM Products, Manufacturers
+  WHERE Products.Manufacturer = Manufacturers.Code
+  GROUP BY Manufacturers.Name;
+ 
+-- Con INNER JOIN 
+SELECT AVG(Price), Manufacturers.Name
+  FROM Products INNER JOIN Manufacturers
+  ON Products.Manufacturer = Manufacturers.Code
+  GROUP BY Manufacturers.Name;
+
+-- Muestra el nombre de los fabricantes cuyos productos tienen un precio medio superior o igual a 150
+-- Sin INNER JOIN 
+SELECT AVG(Price), Manufacturers.Name
+  FROM Products, Manufacturers
+  WHERE Products.Manufacturer = Manufacturers.Code
+  GROUP BY Manufacturers.Name
+  HAVING AVG(Price) >= 150;
+ 
+-- Con INNER JOIN
+SELECT AVG(Price), Manufacturers.Name
+  FROM Products INNER JOIN Manufacturers
+  ON Products.Manufacturer = Manufacturers.Code
+  GROUP BY Manufacturers.Name
+  HAVING AVG(Price) >= 150;
+
+-- Muestra el nombre y precio del producto más barato
+SELECT Name, Price
+  FROM Products
+  WHERE Price = (SELECT MIN(Price) FROM Products);
+
+-- Muestra el nombre de cada fabricante junto con el nombre y precio de su producto más caro
+-- Sin INNER JOIN 
+  SELECT A.Name, A.Price, F.Name
+  FROM Products A, Manufacturers F
+  WHERE A.Manufacturer = F.Code
+    AND A.Price =
+    (
+      SELECT MAX(A.Price)
+        FROM Products A
+        WHERE A.Manufacturer = F.Code
+    );
+ 
+-- With INNER JOIN 
+  SELECT A.Name, A.Price, F.Name
+  FROM Products A INNER JOIN Manufacturers F
+  ON A.Manufacturer = F.Code
+    AND A.Price =
+    (
+      SELECT MAX(A.Price)
+        FROM Products A
+        WHERE A.Manufacturer = F.Code
+    );

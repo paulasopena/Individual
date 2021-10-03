@@ -1,0 +1,48 @@
+#include <mysql.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+int main(int argc, char **argv)
+{
+	MYSQL *conn;
+	int err;
+	// Estructura especial para almacenar resultados de consultas
+	MYSQL_RES *resultado;
+	MYSQL_ROW row;
+	
+	//Creamos una conexion al servidor MYSQL
+	conn = mysql_init(NULL);
+	if (conn==NULL) {
+		printf ("Error al crear la conexi ?? n: %u %s\n", 
+				mysql_errno(conn), mysql_error(conn));
+		exit (1);
+	}
+	//inicializar la conexion
+	conn = mysql_real_connect (conn, "localhost","user", "pass", "personas",0, NULL, 0);
+	if (conn==NULL) {
+		printf ("Error al inicializar la conexi ?? n: %u %s\n", 
+				mysql_errno(conn), mysql_error(conn));
+		exit (1);
+	}
+	// consulta SQL para obtener una tabla con todos los datos
+	// de la base de datos
+	err=mysql_query (conn, "SELECT Usuario.Mail FROM (Usuario, Participacion, Partidas) WHERE Participacion.Puntos =(SELECT MAX(Participacion.Puntos) FROM (Participacion)) AND Participacion.id_U= Usuario.id");
+	if (err!=0) {
+		printf ("Error al consultar datos de la base %u %s\n",
+				mysql_errno(conn), mysql_error(conn));
+		exit (1);
+	}
+	
+	resultado = mysql_store_result (conn); 
+	row = mysql_fetch_row (resultado);
+
+	if (row == NULL)
+		printf ("No se han obtenido datos en la consulta\n");
+	else
+		// El resultado debe ser una matriz con una sola fila
+		// y una columna que contiene el nombre
+		printf ("El e-mail del jugador con más puntos es: %s\n", row[0] );
+	// cerrar la conexion con el servidor MYSQL 
+	mysql_close (conn);
+	exit(0);
+}
