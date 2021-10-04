@@ -15,7 +15,8 @@ CREATE TABLE Usuario (
 CREATE TABLE Partidas (
   int id NOT NULL,
   primary key (id),
-  Fecha VARCHAR(20) NOT NULL,
+  FechaHora VARCHAR(20) NOT NULL,
+  int duracion NOT NULL,
   Ganador VARCHAR(30) NOT NULL,
 )ENGINE = InnoDB;
 
@@ -38,11 +39,11 @@ INSERT INTO Usuario VALUES(5,'Paula','hello', 'mariaubiergo@gmail.com');
 
 
 
-INSERT INTO Partidas VALUES(1,'23/10/21','Maria');
-INSERT INTO Partidas VALUES(2,'22/10/21','Jaume');
-INSERT INTO Partidas VALUES(3,'21/10/21','Minerva');
-INSERT INTO Partidas VALUES(4,'19/10/21','Cayetano');
-INSERT INTO Partidas VALUES(5,'18/10/21','Paula');
+INSERT INTO Partidas VALUES(1,'23/10/21 23:00', 10, 'Maria');
+INSERT INTO Partidas VALUES(2,'22/10/21 16:00', 9, 'Jaume');
+INSERT INTO Partidas VALUES(3,'21/10/21 15:00', 11, 'Minerva');
+INSERT INTO Partidas VALUES(4,'19/10/21 17:00', 12, 'Cayetano');
+INSERT INTO Partidas VALUES(5,'18/10/21 19:00', 15, 'Paula');
 
 
 INSERT INTO Participacion VALUES(1,2,10);
